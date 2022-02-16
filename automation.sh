@@ -63,3 +63,27 @@ tar cvf /tmp/ashok-httpd-logs-${timestamp}.tar *.log
 #------------------Copy to S3 Bucket---------
 aws s3 cp /tmp/ashok-httpd-logs-${timestamp}.tar s3://upgrad-ashok/
 #--------------------------------------------
+
+#-----Checking and Creating inventory html----------
+if [ -e /var/www/html/inventory.html ]
+then
+        echo "Inventory exists"
+else
+        touch /var/www/html/inventory.html
+        echo -e "Log Type \t\t Time Created\t\t Type \t Size" >> /var/www/html/inventory.html
+        echo "Inventory html file created"
+fi
+
+echo -e  "httpd-logs \t\t ${timestamp}\t tar \t `du -k`" | sed 's/.$//' >> /var/www/html/inventory.html
+#-----------------------------------------------------
+
+#--------Cron Job Set up----------------------
+if [ -e /etc/cron.d/automation ]
+then
+        echo "Cron job exists"
+else
+        touch /etc/cron.d/automation
+        echo "0 0 * * * root /root/Automation_Project/automation.sh" > /etc/cron.d/automation
+        echo "Cron job added"
+fi
+#-----------------------------------------
